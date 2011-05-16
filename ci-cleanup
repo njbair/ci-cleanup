@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# ci-cleanup - Source File Inspector for CodeIgniter Applications
+# Copyright (C) 2011  Nick Bair
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+basedir='./application'
+
+files=`find $basedir/controllers $basedir/helpers $basedir/hooks $basedir/libraries $basedir/models -name "*.php"`
+
+# process heads
+echo -n "Checking file headers..."
+head="<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');"
+for file in $files; do
+	if [ "`head -1 $file`" != "$head" ]; then
+		echo
+		echo "$file:"
+		echo `head -5 $file`
+		echo
+		echo "Actions:"
+		echo "1 - Prepend with standard header"
+		echo "2 - Edit file"
+		echo "3 - Prepend then edit"
+		echo "4 - Do nothing"
+		echo
+		read -p "Action? [4] " p
+		if [ "$p" == "1" ] || [ "$p" == "3" ]; then
+			echo $head | cat - $file > /tmp/$file
+			mv /tmp/$file $file
+		fi
+		if [ "$p" == "2" ] || [ "$p" == "3" ]; then
+			editor $file	
+		fi
+		echo
+		echo
+		echo
+	fi
+done
+echo "done!"
+
+# process tails
+echo -n "Checking file footers..."
+for file in $files; do
+	filename=`echo $file | sed -r 's/.*\/([^\/]+)$/\1/'`
+
+	comment_open='/* '
+	comment_close=' */'
+	tail1=`echo End of file $filename`
+	tail2=`echo Location: $file`
+	tail1=`echo "$comment_open$tail1$comment_close"`
+	tail2=`echo "$comment_open$tail2$comment_close"`
+	
+	cur_tail1=`tail -2 $file | head -1`
+	cur_tail2=`tail -1 $file`
+
+	if [ "$cur_tail1" != "$tail1" ] || [ "$cur_tail2" != "$tail2" ]; then
+		echo
+		echo "$file:"
+		tail -5 $file
+		echo
+		echo "Actions:"
+		echo "1 - Append with standard footer"
+		echo "2 - Edit file"
+		echo "3 - Append then edit"
+		echo "4 - Do nothing"
+		echo
+		read -p "Action? [4] " p
+		if [ "$p" == "1" ] || [ "$p" == "3" ]; then
+			echo -e "$tail1"\\n"$tail2" >> $file
+		fi
+		if [ "$p" == "2" ] || [ "$p" == "3" ]; then
+			editor $file	
+		fi
+		echo
+		echo
+		echo
+	fi
+done
+echo "done!"

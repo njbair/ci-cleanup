@@ -1,0 +1,40 @@
+ci-cleanup - Source File Inspector for CodeIgniter Applications
+Copyright (C) 2011 Nick Bair
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+***
+
+ci-cleanup is a Bash script which searches through source files in a
+CodeIgniter installation and interactively modifies the header and
+footer for each file adherent to the CodeIgniter Style Guide, as in the
+examples below.
+
+Example header:
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+Example footer:
+/* End of file Auth.php */
+/* Location: ./application/libraries/Auth.php */
+
+When a source file is found which deviates from this standard, the
+relevant portion of the source file is displayed and the user is
+presented with options to prepend/append the header/footer, edit the
+file manually, append/prepend then edit, or do nothing.
+
+More information on the PHP header in CodeIgniter can be found at
+http://codeigniter.com/forums/viewthread/93620/
+
+More info on the CI closing comment tags can be found at
+http://codeigniter.com/user_guide/general/styleguide.html#php_closing_tag
